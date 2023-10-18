@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "tochka-cyclops-api"
+version = "0.1.0"
+description = ""
+authors = ["[object Object] <yamldeveloper@proton.me>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+requests = "^2.31.0"
+pyopenssl = "^23.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
