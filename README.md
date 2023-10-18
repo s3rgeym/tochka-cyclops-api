@@ -13,6 +13,8 @@ pip install tochka-cyclops-api
 Использование:
 
 ```python
+from tochka_cyclops_api import ApiTochka
+
 api = ApiTochka(
   base_url=API_TOCHKA_BASE_URL,
   sign_system=API_TOCHKA_SIGN_SYSTEM,
