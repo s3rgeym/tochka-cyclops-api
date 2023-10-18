@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "tochka-cyclops-api"
 version = "0.1.0"
-description = ""
-authors = ["[object Object] <yamldeveloper@proton.me>"]
+description = "Tochka API v2 aka Cyclops API"
+authors = ["Sergey M"]
 readme = "README.md"
+repourl="https://github.com/s3rgeym/tochka-cyclops-api"
 
 [tool.poetry.dependencies]
 python = "^3.11"
