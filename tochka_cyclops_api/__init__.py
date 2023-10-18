@@ -34,11 +34,11 @@ class ApiError(_Error):
             raise cls(**response["error"])
 
     def __str__(self) -> str:
-        extra = ['']
+        rv = [f"{self.code}: {self.message}"]
         for prop in ["meta", "data", "error"]:
             if val := getattr(self, prop):
-                extra.append(f"{prop}: {val!r}")
-        return f"{self.code}: {self.message}" + "; ".join(extra)
+                rv.append(f"{prop}: {val!r}")
+        return  "; ".join(rv)
 
 
 def camel_to_snake(name: str) -> str:
