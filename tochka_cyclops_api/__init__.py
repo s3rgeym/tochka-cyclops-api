@@ -34,7 +34,7 @@ class ApiError(_Error):
             raise cls(**response["error"])
 
     def __str__(self) -> str:
-        extra = []
+        extra = ['']
         for prop in ["meta", "data", "error"]:
             if val := getattr(self, prop):
                 extra.append(f"{prop}: {val!r}")
