@@ -44,7 +44,7 @@ try:
     }
   }
 
-  * identificationPayment, IdentificationPayment и identification_payment вызывают один и тот же метод;
+  * camelCase преобразуется в snake_case: identificationPayment, IdentificationPayment и identification_payment равнозначны;
   * Вместо именованных параметров можно передать словарь;
   * Если словарь и именованные параметры передаются вместе, то они мержатся, причем именованные параметры перезаписывают соотв элементы словаря.
 
