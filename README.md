@@ -26,14 +26,39 @@ api = ApiTochka(
   pkey_data=API_TOCHKA_PKEY_DATA,
 )
 
-# Вызовы
-# Вернет словарь (поле result) либо бросит ошибку ApiError (у ошибок есть code str)
+# Вызов методов
 try:
-  # Все три примера вызовут один и тот же метод с теми же параметрами
-  res = api.meth_name(foo='bar', baz=42)
-  res = api.methName({'foo': 'bar'}, baz=42)
-  res = api.jsonrpc_call('MethName', {'foo': 'bar', 'baz': 42})
+  # Отправит запрос с таким телом:
+  {
+    "id": "0d6a26ea-84f0-4be2-9999-b46edc9b59b6",
+    "jsonrpc": "2.0",
+    "method": "identification_payment",
+    "params": {
+      "payment_id": "cyclops-b9eabfd7-eead-4940-a6b1-4654850664f5",
+      "owners":[{
+        "virtual_account": "859b645a-ebb8-4f91-8b05-b433c85dc662",
+        "amount": 1000
+      }]
+    }
+  }
+
+  # identificationPayment, IdentificationPayment и identification_payment вызывают один и тот же метод
+  # вместо именованных параметров можно передать словарь
+  # если словарь и именованные параметры передаются вместе, то они мержатся, причем именованные параметры перезаписывают соотв элементы словаря
+  res = api.identificationPayment(payment_id="cyclops-b9eabfd7-eead-4940-a6b1-4654850664f5", owners=[{
+      "virtual_account": "859b645a-ebb8-4f91-8b05-b433c85dc662",
+      "amount": 1000
+  }])
+
+  # Результат будет примерно таким:
+  {
+    "virtual_accounts": [{
+      "code": "859b645a-ebb8-4f91-8b05-b433c85dc662",
+      "cash": 1000
+    }]
+  }
 except ApiError as ex:
-  if ex.code == '1234':
-    do_smthn()
+  if ex.code == '4411':
+    print('Аккаунт не найден')
+  ...
 ```
