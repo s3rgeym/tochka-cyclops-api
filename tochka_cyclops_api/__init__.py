@@ -124,7 +124,7 @@ class ApiTochka:
         )
         try:
             rv = resp.json()
-        except json.JSONDecodeError as ex:
+        except requests.JSONDecodeError as ex:
             raise BadResponse.from_response(response=resp) from ex
         ApiError.raise_if_error(rv)
         return rv

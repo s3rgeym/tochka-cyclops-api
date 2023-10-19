@@ -22,8 +22,9 @@ api = ApiTochka(
   pkey_data=API_TOCHKA_PKEY_DATA,
 )
 
-# Вызовы. Все три примера вызовут один и тот же метод с теми же параметрами. Не вы понЕли?!
-api.call_meth(foo='bar', baz=42)
-api.callMeth({'foo': 'bar'}, baz=42)
-api.CallMeth({'foo': 'bar', 'baz': 42})
+# Вызовы
+# Все три примера вызовут один и тот же метод с теми же параметрами
+api.meth_name(foo='bar', baz=42)
+api.methName({'foo': 'bar'}, baz=42)
+api.jsonrpc_call('MethName', {'foo': 'bar', 'baz': 42})
 ```
