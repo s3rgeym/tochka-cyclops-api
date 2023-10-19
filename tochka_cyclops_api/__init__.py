@@ -16,12 +16,27 @@ import requests
 from OpenSSL import crypto
 
 
-class _Error(Exception):
+class BaseError(Exception):
     pass
 
 
 @dataclass(frozen=True)
-class ApiError(_Error):
+class BadResponse(BaseError):
+    status: int
+    reason: str
+
+    @classmethod
+    def from_response(
+        cls: Type[BadResponse], response: requests.Response
+    ) -> BadResponse:
+        return cls(status=response.status_code, reason=response.reason)
+
+    def __str__(self) -> str:
+        return f"{self.status}: {self.reason}"
+
+
+@dataclass(frozen=True)
+class ApiError(BaseError):
     code: str
     message: str
     meta: Any = None
@@ -38,7 +53,7 @@ class ApiError(_Error):
         for prop in ["meta", "data", "error"]:
             if val := getattr(self, prop):
                 rv.append(f"{prop}: {val!r}")
-        return  "; ".join(rv)
+        return "; ".join(rv)
 
 
 def camel_to_snake(name: str) -> str:
@@ -107,8 +122,10 @@ class ApiTochka:
             headers=headers,
             timeout=self.timeout,
         )
-        # assert resp.ok
-        rv = resp.json()
+        try:
+            rv = resp.json()
+        except json.JSONDecodeError as ex:
+            raise BadResponse.from_response(response=resp) from ex
         ApiError.raise_if_error(rv)
         return rv
 
