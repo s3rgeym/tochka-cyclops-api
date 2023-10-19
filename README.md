@@ -1,8 +1,10 @@
-# Tochka API v2 aka Cyclops API
+# Tochka API v2 aka Cyclops API Library for Python
 
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/tochka-cyclops-api)]() [![PyPI - Version](https://img.shields.io/pypi/v/tochka-cyclops-api)]() [![PyPI - Downloads](https://img.shields.io/pypi/dm/tochka_cyclops_api)]()
 
 Ставьте звезды, суки бесполезные! Мне от ваших 100 установок в первый день НИКАКОЙ ПОЛЬЗЫ
+
+> Unofficial Python Library for Tochka API
 
 Неофициальная библиотека на Python для работы с АПИ Точка Банка (я его предпочитаю называть дрочка банком). [Документация туть](https://api.tochka.com/static/v1/tender-docs/cyclops/main/index.html).
 
