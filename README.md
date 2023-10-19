@@ -17,7 +17,7 @@ pip install tochka-cyclops-api
 Использование:
 
 ```python
-from tochka_cyclops_api import ApiTochka
+from tochka_cyclops_api import ApiTochka, ApiError
 
 api = ApiTochka(
   base_url=API_TOCHKA_BASE_URL,
@@ -28,8 +28,12 @@ api = ApiTochka(
 
 # Вызовы
 # Вернет словарь (поле result) либо бросит ошибку ApiError (у ошибок есть code str)
-# Все три примера вызовут один и тот же метод с теми же параметрами
-api.meth_name(foo='bar', baz=42)
-api.methName({'foo': 'bar'}, baz=42)
-api.jsonrpc_call('MethName', {'foo': 'bar', 'baz': 42})
+try:
+  # Все три примера вызовут один и тот же метод с теми же параметрами
+  res = api.meth_name(foo='bar', baz=42)
+  res = api.methName({'foo': 'bar'}, baz=42)
+  res = api.jsonrpc_call('MethName', {'foo': 'bar', 'baz': 42})
+except ApiError as ex:
+  if ex.code == '0000':
+    do_smthn()
 ```
