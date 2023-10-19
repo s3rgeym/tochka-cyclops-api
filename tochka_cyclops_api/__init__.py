@@ -105,6 +105,8 @@ class ApiTochka:
         query_params: dict | None = None,
         content_type: str = "application/json",
     ) -> Any:
+        if callable(getattr(data, 'read', None)):
+            data = data.read()
         if not isinstance(data, bytes):
             data = data.encode()
         sign_data = OpenSSL.crypto.sign(self.pkey, data, "sha256")
