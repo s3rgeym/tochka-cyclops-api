@@ -5,6 +5,7 @@ import io
 import json
 import mimetypes
 import re
+import sys
 import uuid
 from dataclasses import KW_ONLY, dataclass
 from functools import cached_property
@@ -61,6 +62,22 @@ def camel_to_snake(name: str) -> str:
     return re.sub("([a-z0-9])([A-Z])", r"\1_\2", name).lower()
 
 
+DocumentMimeTypes = Literal[
+    "application/pdf",
+    "image/gif",
+    "image/jpeg",
+    "image/pjpeg",
+    "image/png",
+    "image/tiff",
+    "image/x-tiff",
+    "image/bmp",
+    "image/x-windows-bmp",
+    "image/x-ms-bmp",
+    "image/ms-bmp",
+    "image/x-bmp",
+]
+
+
 @dataclass
 class ApiTochka:
     """See: <https://api.tochka.com/static/v1/tender-docs/cyclops/main/index.html>"""
@@ -73,6 +90,10 @@ class ApiTochka:
     session: Optional[requests.Session] = None
     base_url: str = "https://api.tochka.com/api/v1/cyclops"
     timeout: float = 15.0
+    user_agent: str = (
+        "Mozilla/5.0 (+https://github.com/s3rgeym/tochka-cyclops-api"
+        f"; Python/{'.'.join(map(str, sys.version_info[:3]))})"
+    )
 
     @cached_property
     def pkey(self) -> crypto.PKey:
@@ -84,12 +105,7 @@ class ApiTochka:
 
     def default_session(self) -> requests.Session:
         s = requests.session()
-        s.headers.update(
-            {
-                "User-Agent": "Mozilla/5.0",
-                "Accept": "application/json",
-            }
-        )
+        s.headers.update({"Accept": "application/json"})
         return s
 
     def __post_init__(self) -> None:
@@ -105,7 +121,7 @@ class ApiTochka:
         query_params: dict | None = None,
         content_type: str = "application/json",
     ) -> Any:
-        if callable(getattr(data, 'read', None)):
+        if callable(getattr(data, "read", None)):
             data = data.read()
         if not isinstance(data, bytes):
             data = data.encode()
@@ -116,6 +132,7 @@ class ApiTochka:
             "sign-thumbprint": self.sign_thumbprint,
             "sign-system": self.sign_system,
             "Content-Type": content_type,
+            "User-Agent": self.user_agent,
         }
         resp = self.session.post(
             self._get_full_url(endpoint),
@@ -160,10 +177,9 @@ class ApiTochka:
 
     def __getattr__(self, name: str) -> Any:
         if not name.startswith("_"):
-            name = camel_to_snake(name)
 
             def fn(*args: Any, **kwargs: Any) -> Any:
-                return self.jsonrpc_call(name, *args, **kwargs)
+                return self.jsonrpc_call(camel_to_snake(name), *args, **kwargs)
 
             fn.__name__ = name
             return fn
@@ -177,21 +193,7 @@ class ApiTochka:
         kind: Literal["beneficiary", "deal"],
         data: BinaryIO | bytes,
         params: dict | None = None,
-        content_type: Literal[
-            "application/pdf",
-            "image/gif",
-            "image/jpeg",
-            "image/pjpeg",
-            "image/png",
-            "image/tiff",
-            "image/x-tiff",
-            "image/bmp",
-            "image/x-windows-bmp",
-            "image/x-ms-bmp",
-            "image/ms-bmp",
-            "image/x-bmp",
-            None,
-        ] = None,
+        content_type: DocumentMimeTypes | None = None,
         **kwargs: Any,
     ) -> dict:
         params = dict(params or {})

@@ -25,10 +25,10 @@ pip install tochka-cyclops-api
 from tochka_cyclops_api import ApiTochka, ApiError
 
 api = ApiTochka(
-  base_url=API_TOCHKA_BASE_URL,
-  sign_system=API_TOCHKA_SIGN_SYSTEM,
-  sign_thumbprint=API_TOCHKA_SIGN_THUMBPRINT,
-  pkey_data=API_TOCHKA_PKEY_DATA,
+  base_url='<API_URL>',
+  sign_system='<SIGN_SYSTEM>',
+  sign_thumbprint='<SIGN_THUMBPRINT>',
+  pkey_data=open('/path/to/rsaprivkey.pem').read(),
 )
 
 # Вызов методов
@@ -49,9 +49,11 @@ try:
     }
   }
 
-  * camelCase преобразуется в snake_case: identificationPayment, IdentificationPayment и identification_payment равнозначны.
+  * camelCase преобразуется в snake_case: identificationPayment,
+    IdentificationPayment и identification_payment равнозначны.
   * Вместо именованных параметров можно передать словарь.
-  * Если словарь и именованные параметры передаются вместе, то они мержатся, причем именованные параметры перезаписывают соотв элементы словаря.
+  * Если словарь и именованные параметры передаются вместе, то они мержатся,
+    причем именованные параметры перезапишут элементы словаря.
 
   Результат будет примерно таким:
 
