@@ -27,6 +27,7 @@ api = ApiTochka(
 )
 
 # Вызовы
+# Вернет словарь (поле result) либо бросит ошибку ApiError (у ошибок есть code str)
 # Все три примера вызовут один и тот же метод с теми же параметрами
 api.meth_name(foo='bar', baz=42)
 api.methName({'foo': 'bar'}, baz=42)
