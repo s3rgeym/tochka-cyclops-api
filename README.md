@@ -2,7 +2,7 @@
 
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/tochka-cyclops-api)]() [![PyPI - Downloads](https://img.shields.io/pypi/dm/tochka_cyclops_api)]()
 
-Ставьте звезды, суки бесполезные!
+Ставьте звезды, суки бесполезные! Мне от ваших 100 установок в первый день НИКАКОЙ ПОЛЬЗЫ
 
 Неофициальная библиотека на Python для работы с АПИ Точка Банка. [Документация](https://api.tochka.com/static/v1/tender-docs/cyclops/main/index.html).
 
