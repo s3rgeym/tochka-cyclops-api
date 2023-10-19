@@ -34,6 +34,6 @@ try:
   res = api.methName({'foo': 'bar'}, baz=42)
   res = api.jsonrpc_call('MethName', {'foo': 'bar', 'baz': 42})
 except ApiError as ex:
-  if ex.code == '0000':
+  if ex.code == '1234':
     do_smthn()
 ```
