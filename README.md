@@ -68,6 +68,10 @@ try:
       "virtual_account": "859b645a-ebb8-4f91-8b05-b433c85dc662",
       "amount": 1000
   }])
+
+  # Вместо словаря при парсинге объектов используется AttrDict,
+  # который позволяет к поля обращаться как к свойствам
+  print(rv.virtual_accounts[0])
 except ApiError as ex:
   if ex.code == '4411':
     print('Аккаунт не найден')

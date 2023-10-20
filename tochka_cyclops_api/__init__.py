@@ -9,6 +9,7 @@ import sys
 import uuid
 from dataclasses import KW_ONLY, dataclass
 from functools import cached_property
+from types import SimpleNamespace
 from typing import Any, BinaryIO, Literal, Optional, Type, Union
 from urllib.parse import urljoin
 
@@ -142,7 +143,9 @@ class ApiTochka:
             timeout=self.timeout,
         )
         try:
-            rv = resp.json()
+            # Позволяет использовать rv.foo.bar вместо rv['foo']['bar']
+            # rv = resp.json(object_hook=lambda x: SimpleNamespace(**x))
+            rv = resp.json(object_hook=AttrDict)
         except requests.JSONDecodeError as ex:
             raise BadResponse.from_response(response=resp) from ex
         ApiError.raise_if_error(rv)
@@ -205,3 +208,9 @@ class ApiTochka:
         return self.request(
             f"upload_document/{kind}", data, params, content_type
         )
+
+
+class AttrDict(dict):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.__dict__ = self
