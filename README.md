@@ -76,6 +76,22 @@ except ApiError as ex:
   if ex.code == '4411':
     print('Аккаунт не найден')
   ...
+
+
+# Ну и пример загрузки документа
+import datetime, time
+
+rv = api.upload_document(
+    'beneficiary',
+    open('/path/to/offer.pdf', 'rb'),
+    beneficiary_id='...',
+    document_type='contract_offer',
+    document_date=datetime.datetime.now().strftime("%Y-%m-%d"),
+    document_number=f"{int(time.time())}",
+)
+
+# cyclops-231020230621590-98a669e2-859b-44ac-9831-4a964ac7e49b
+print(rv.document_id)
 ```
 
 Все мыслимые права защищены _в натуре_ (с) 2023.
