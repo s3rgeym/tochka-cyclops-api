@@ -204,7 +204,7 @@ class ApiTochka:
                 raise ValueError("you must specify content_type for raw data")
             content_type, _ = mimetypes.guess_type(data.name)
         return self.request(
-            f"upload_document/{kind}", data, params, content_type
+            f"/upload_document/{kind}", data, params, content_type
         )
 
 
