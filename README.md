@@ -90,8 +90,7 @@ rv = api.upload_document(
     document_number=f"{int(time.time())}",
 )
 
-# cyclops-231020230621590-98a669e2-859b-44ac-9831-4a964ac7e49b
-print(rv.document_id)
+print(rv.document_id)  # cyclops-231020230621590-98a669e2-859b-44ac-9831-4a964ac7e49b
 ```
 
 Все мыслимые права защищены _в натуре_ (с) 2023.
