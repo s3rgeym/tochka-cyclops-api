@@ -160,10 +160,9 @@ class ApiTochka:
         method: str,
         params: dict | None = None,
         endpoint: str | None = None,
-        **kw: Any,
+        **kwargs: Any,
     ) -> Any:
-        params = dict(params or {})
-        params.update(kw)
+        params = dict(params or {}, **kwargs)
 
         payload = {
             "jsonrpc": "2.0",
@@ -199,8 +198,7 @@ class ApiTochka:
         content_type: DocumentMimeTypes | None = None,
         **kwargs: Any,
     ) -> dict:
-        params = dict(params or {})
-        params.update(kwargs)
+        params = dict(params or {}, **kwargs)
         if not content_type:
             if not isinstance(data, io.IOBase):
                 raise ValueError("you must specify content_type for raw data")
