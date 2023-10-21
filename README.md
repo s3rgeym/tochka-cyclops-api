@@ -80,16 +80,13 @@ except ApiError as ex:
   ...
 
 
-# Ну и пример загрузки документа
-import datetime, time
-
 rv = api.upload_document(
     'beneficiary',
     open('/path/to/offer.pdf', 'rb'),  # можно передать любой объект, имеющий метод read, например, `requests.get('https://target/path/to/file.pdf')`, но тогда придется указать content_type
     beneficiary_id='...',
     document_type='contract_offer',
-    document_date=datetime.datetime.now().strftime("%Y-%m-%d"),
-    document_number=f"{int(time.time())}",
+    document_date='2023-11-12',
+    document_number='12345',
 )
 
 print(rv.document_id)  # cyclops-231020230621590-98a669e2-859b-44ac-9831-4a964ac7e49b
