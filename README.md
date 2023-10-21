@@ -82,9 +82,12 @@ except ApiError as ex:
 
 rv = api.upload_document(
     'beneficiary',
-    open('/path/to/offer.pdf', 'rb'),  # можно передать любой объект, имеющий метод read, например, `requests.get('https://target/path/to/file.pdf')`, но тогда придется указать content_type
+    # можно передать любой объект, имеющий метод read, например, `requests.get('https://target/path/to/file.pdf')`,
+    # но тогда придется указать content_type
+    open('/path/to/offer.pdf', 'rb'),  
     beneficiary_id='...',
     document_type='contract_offer',
+    # Эти параметры можно опустить, они сгенерируются автоматически
     document_date='2023-11-12',
     document_number='12345',
 )
