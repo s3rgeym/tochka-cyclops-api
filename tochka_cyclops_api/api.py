@@ -112,8 +112,8 @@ class ApiTochka:
         return rv
 
     @staticmethod
-    def _generate_id() -> str:
-        return str(uuid.uuid4())
+    def _generate_id() -> uuid.UUID:
+        return uuid.uuid4()
 
     def jsonrpc_call(
         self,
@@ -131,7 +131,7 @@ class ApiTochka:
             "id": self._generate_id(),
         }
 
-        data = json.dumps(payload)
+        data = json.dumps(payload, default=str)
 
         res = self.request(endpoint or "/v2/jsonrpc", data)
         assert res["id"] == payload["id"]
