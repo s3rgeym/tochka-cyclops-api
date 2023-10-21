@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import base64
+import datetime
 import io
 import json
 import mimetypes
 import sys
+import time
 import uuid
 from dataclasses import KW_ONLY, dataclass
 from functools import cached_property
@@ -153,10 +155,26 @@ class ApiTochka:
         kind: Literal["beneficiary", "deal"],
         data: BinaryIO | bytes,
         params: dict | None = None,
+        *,
+        document_type: str,
+        document_number: str | int | None = None,
+        document_date: datetime.datetime | datetime.date | str | None = None,
         content_type: DocumentMimeTypes | None = None,
         **kwargs: Any,
     ) -> dict:
-        params = dict(params or {}, **kwargs)
+        if document_number is None:
+            document_number = time.time_ns()
+        if document_date is None:
+            document_date = datetime.datetime.now()
+        if isinstance(document_date, (datetime.date, datetime.datetime)):
+            document_date = document_date.strftime("%Y-%m-%d")
+        params = dict(
+            params or {},
+            document_type=document_type,
+            document_number=str(document_number), 
+            document_date=document_date,
+            **kwargs,
+        )
         if not content_type:
             # if not isinstance(data, io.IOBase):
             if not hasattr(data, "name"):
