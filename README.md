@@ -25,56 +25,56 @@ pip install tochka-cyclops-api
 from tochka_cyclops_api import ApiTochka, ApiError
 
 api = ApiTochka(
-  base_url='<API_URL>',
-  sign_system='<SIGN_SYSTEM>',
-  sign_thumbprint='<SIGN_THUMBPRINT>',
-  pkey_data=open('/path/to/rsaprivkey.pem').read(),
+    base_url='<API_URL>',
+    sign_system='<SIGN_SYSTEM>',
+    sign_thumbprint='<SIGN_THUMBPRINT>',
+    pkey_data=open('/path/to/rsaprivkey.pem').read(),
 )
 
 # Вызов методов
 try:
-  """
-  Отправит запрос с таким телом:
-
-  {
-    "id": "0d6a26ea-84f0-4be2-9999-b46edc9b59b6",
-    "jsonrpc": "2.0",
-    "method": "identification_payment",
-    "params": {
-      "payment_id": "cyclops-b9eabfd7-eead-4940-a6b1-4654850664f5",
-      "owners":[{
-        "virtual_account": "859b645a-ebb8-4f91-8b05-b433c85dc662",
-        "amount": 1000
+    """
+    Отправит запрос с таким телом:
+  
+    {
+      "id": "0d6a26ea-84f0-4be2-9999-b46edc9b59b6",
+      "jsonrpc": "2.0",
+      "method": "identification_payment",
+      "params": {
+        "payment_id": "cyclops-b9eabfd7-eead-4940-a6b1-4654850664f5",
+        "owners":[{
+          "virtual_account": "859b645a-ebb8-4f91-8b05-b433c85dc662",
+          "amount": 1000
+        }]
+      }
+    }
+  
+    * camelCase преобразуется в snake_case: identificationPayment,
+      IdentificationPayment и identification_payment равнозначны.
+    * Вместо именованных параметров можно передать словарь.
+    * Если словарь и именованные параметры передаются вместе, то они мержатся,
+      причем именованные параметры перезапишут элементы словаря.
+  
+    Результат будет примерно таким:
+  
+    {
+      "virtual_accounts": [{
+        "code": "859b645a-ebb8-4f91-8b05-b433c85dc662",
+        "cash": 1000
       }]
     }
-  }
-
-  * camelCase преобразуется в snake_case: identificationPayment,
-    IdentificationPayment и identification_payment равнозначны.
-  * Вместо именованных параметров можно передать словарь.
-  * Если словарь и именованные параметры передаются вместе, то они мержатся,
-    причем именованные параметры перезапишут элементы словаря.
-
-  Результат будет примерно таким:
-
-  {
-    "virtual_accounts": [{
-      "code": "859b645a-ebb8-4f91-8b05-b433c85dc662",
-      "cash": 1000
-    }]
-  }
-  """
-  res = api.identificationPayment(payment_id="cyclops-b9eabfd7-eead-4940-a6b1-4654850664f5", owners=[{
-      "virtual_account": "859b645a-ebb8-4f91-8b05-b433c85dc662",
-      "amount": 1000
-  }])
-
-  # Вместо словаря при парсинге объектов используется AttrDict,
-  # который позволяет к полям обращаться как к атрибутам, а не только по индексу
-  print(rv.virtual_accounts[0])
+    """
+    res = api.identificationPayment(payment_id="cyclops-b9eabfd7-eead-4940-a6b1-4654850664f5", owners=[{
+        "virtual_account": "859b645a-ebb8-4f91-8b05-b433c85dc662",
+        "amount": 1000
+    }])
+  
+    # Вместо словаря при парсинге объектов используется AttrDict,
+    # который позволяет к полям обращаться как к атрибутам, а не только по индексу
+    print(rv.virtual_accounts[0])
 except ApiError as ex:
-  if ex.code == '4411':
-    print('Аккаунт не найден')
+    if ex.code == '4411':
+        print('Аккаунт не найден')
   ...
 
 
