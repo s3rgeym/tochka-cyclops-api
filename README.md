@@ -35,7 +35,7 @@ api = ApiTochka(
 try:
     """
     Отправит запрос с таким телом:
-  
+
     {
       "id": "0d6a26ea-84f0-4be2-9999-b46edc9b59b6",
       "jsonrpc": "2.0",
@@ -48,15 +48,15 @@ try:
         }]
       }
     }
-  
+
     * camelCase преобразуется в snake_case: identificationPayment,
       IdentificationPayment и identification_payment равнозначны.
     * Вместо именованных параметров можно передать словарь.
     * Если словарь и именованные параметры передаются вместе, то они мержатся,
       причем именованные параметры перезапишут элементы словаря.
-  
+
     Результат будет примерно таким:
-  
+
     {
       "virtual_accounts": [{
         "code": "859b645a-ebb8-4f91-8b05-b433c85dc662",
@@ -68,7 +68,7 @@ try:
         "virtual_account": "859b645a-ebb8-4f91-8b05-b433c85dc662",
         "amount": 1000
     }])
-  
+
     # Вместо словаря при парсинге объектов используется AttrDict,
     # который позволяет к полям обращаться как к атрибутам, а не только по индексу
     print(rv.virtual_accounts[0])
@@ -83,7 +83,7 @@ import datetime, time
 
 rv = api.upload_document(
     'beneficiary',
-    open('/path/to/offer.pdf', 'rb'),
+    open('/path/to/offer.pdf', 'rb'),  # можно передать любой объект, имеющий метод read, например, `requests.get('https://target/path/to/file.pdf')`, но тогда придется указать content_type
     beneficiary_id='...',
     document_type='contract_offer',
     document_date=datetime.datetime.now().strftime("%Y-%m-%d"),

@@ -22,6 +22,10 @@ class BaseError(Exception):
     pass
 
 
+class ConnectionError(BaseError):
+    pass
+
+
 @dataclass(frozen=True)
 class BadResponse(BaseError):
     status: int
@@ -135,19 +139,23 @@ class ApiTochka:
             "Content-Type": content_type,
             "User-Agent": self.user_agent,
         }
-        resp = self.session.post(
-            self._get_full_url(endpoint),
-            data=data,
-            params=query_params,
-            headers=headers,
-            timeout=self.timeout,
-        )
         try:
+            resp = self.session.post(
+                self._get_full_url(endpoint),
+                data=data,
+                params=query_params,
+                headers=headers,
+                timeout=self.timeout,
+            )
             # Позволяет использовать rv.foo.bar вместо rv['foo']['bar']
             # rv = resp.json(object_hook=lambda x: SimpleNamespace(**x))
             rv = resp.json(object_hook=AttrDict)
-        except requests.JSONDecodeError as ex:
-            raise BadResponse.from_response(response=resp) from ex
+        except requests.JSONDecodeError as e:
+            raise BadResponse.from_response(response=resp) from e
+        except requests.RequestException as e:
+            raise ConnectionError(
+                f"Request failed due connection error: {e}"
+            ) from e
         ApiError.raise_if_error(rv)
         return rv
 
