@@ -10,7 +10,7 @@ import uuid
 from dataclasses import KW_ONLY, dataclass
 from functools import cached_property
 from types import SimpleNamespace
-from typing import Any, BinaryIO, Literal, Optional, Type, Union
+from typing import Any, BinaryIO, Literal, Type
 from urllib.parse import urljoin
 
 import OpenSSL
@@ -90,9 +90,9 @@ class ApiTochka:
     _: KW_ONLY
     sign_system: str
     sign_thumbprint: str
-    pkey_data: Union[str, bytes]
-    pkey_passphrase: Optional[bytes] = None
-    session: Optional[requests.Session] = None
+    pkey_data: bytes | str
+    pkey_passphrase: bytes | str | None = None
+    session: requests.Session | None = None
     base_url: str = "https://api.tochka.com/api/v1/cyclops"
     timeout: float = 15.0
     user_agent: str = (
@@ -122,7 +122,7 @@ class ApiTochka:
     def request(
         self,
         endpoint: str,
-        data: Union[str, bytes, io.IOBase],
+        data: str | bytes | io.IOBase,
         query_params: dict | None = None,
         content_type: str = "application/json",
     ) -> Any:
@@ -195,7 +195,7 @@ class ApiTochka:
             return fn
         raise AttributeError(name)
 
-    __call__ = jsonrpc_call
+    __call__ = jsonrpc_call  # <ApiTochka>('method', params)
 
     # https://api.tochka.com/static/v1/tender-docs/cyclops/main/upload_document.html#upload-document
     def upload_document(
@@ -208,7 +208,8 @@ class ApiTochka:
     ) -> dict:
         params = dict(params or {}, **kwargs)
         if not content_type:
-            if not isinstance(data, io.IOBase):
+            #if not isinstance(data, io.IOBase):
+            if not hasattr(data, 'name'):
                 raise ValueError("you must specify content_type for raw data")
             content_type, _ = mimetypes.guess_type(data.name)
         return self.request(
