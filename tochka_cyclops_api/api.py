@@ -100,14 +100,14 @@ class ApiTochka:
             # Позволяет использовать rv.foo.bar вместо rv['foo']['bar']
             # rv = resp.json(object_hook=lambda x: SimpleNamespace(**x))
             rv = resp.json(object_hook=AttrDict)
+            ApiError.raise_if_error(rv)
+            return rv
         except requests.JSONDecodeError as e:
             raise BadResponse.from_response(response=resp) from e
         except requests.RequestException as e:
             raise ConnectionError(
                 f"Request failed due connection error: {e}"
             ) from e
-        ApiError.raise_if_error(rv)
-        return rv
 
     @staticmethod
     def _generate_id() -> str:
