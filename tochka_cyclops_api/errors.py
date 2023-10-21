@@ -5,7 +5,7 @@ from typing import Any, Type
 
 import requests
 
-__all__ = ("BaseError", "ConnectionError", "BadResponse", "ApiError")
+__all__: tuple[str, ...] = ("BaseError", "ConnectionError", "BadResponse", "ApiError")
 
 
 class BaseError(Exception):
