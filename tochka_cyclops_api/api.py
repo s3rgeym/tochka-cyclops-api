@@ -134,8 +134,8 @@ class ApiTochka:
         data = json.dumps(payload, default=str)
 
         res = self.request(endpoint or "/v2/jsonrpc", data)
-        assert res["id"] == payload["id"]
-        return res["result"]
+        assert res.id == str(payload["id"])
+        return res.result
 
     def __getattr__(self, name: str) -> Any:
         if not name.startswith("_"):
