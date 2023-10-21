@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tochka-cyclops-api"
-version = "0.2.3"
+version = "0.2.4"
 description = "Tochka API v2 aka Cyclops API"
 authors = ["Sergey M"]
 readme = "README.md"
