@@ -44,7 +44,7 @@ class ApiError(BaseError):
     # Некоторые методы API возвращают еще и егора, те да там конструкция вида: {"error": {"error": ...}} (масло масляное)
     error: Any = None
     # На случай если будут добавлены еще какие-то поля
-    rest: field(default_factory=dict) = None
+    rest: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
     def raise_if_error(cls: Type[ApiError], response: AttrDict) -> None:
