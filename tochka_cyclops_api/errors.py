@@ -50,7 +50,8 @@ class ApiError(BaseError):
     def raise_if_error(cls: Type[ApiError], response: AttrDict) -> None:
         if "error" in response:
             d = dict(response.error)
-            raise cls(**{i: d.pop(i) for i in d if i in cls.__match_args__}, rest=d)
+            # for i in d приведет к ошибке dictionary changed size during iteration
+            raise cls(**{i: d.pop(i) for i in response.error if i in cls.__match_args__}, rest=d)
 
     # 4418: This operation is impossible with the current status of the deal; meta: 'in_process'
     def __str__(self) -> str:
