@@ -44,20 +44,18 @@ class ApiError(BaseError):
     # Некоторые методы API возвращают еще и егора, те да там конструкция вида: {"error": {"error": ...}} (масло масляное)
     error: Any = None
     # На случай если будут добавлены еще какие-то поля
-    kwargs: field(default_factory=dict) = None
+    rest: field(default_factory=dict) = None
 
     @classmethod
     def raise_if_error(cls: Type[ApiError], response: AttrDict) -> None:
         if "error" in response:
-            raise cls(
-                **{k: kwargs.pop(k) for k in response.error if k in cls.__match_args__},
-                kwargs=response.error,
-            )
+            d = dict(response.error)
+            raise cls(**{i: d.pop(i) for i in d if i in cls.__match_args__}, rest=d)
 
     # 4418: This operation is impossible with the current status of the deal; meta: 'in_process'
     def __str__(self) -> str:
         rv = [f"{self.code}: {self.message}"]
-        for prop in ["meta", "data", "error"]:
-            if val := getattr(self, prop):
-                rv.append(f"{prop}: {val!r}")
+        for k in ['meta', 'data', 'error']:
+            if v := getattr(self, k):
+                rv.append(f"{k}: {v!r}")
         return "; ".join(rv)
