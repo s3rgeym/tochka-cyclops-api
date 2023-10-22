@@ -73,6 +73,9 @@ class ApiTochka:
     def _get_full_url(self, endpoint: str) -> str:
         return urljoin(self.base_url.rstrip("/") + "/", endpoint.lstrip("/"))
 
+    def _sign_data(self, data: bytes) -> str:
+        return base64.b64encode(crypto.sign(self.pkey, data, "sha256")).decode()
+
     def request(
         self,
         endpoint: str,
@@ -84,10 +87,10 @@ class ApiTochka:
             data = data.read()
         if not isinstance(data, bytes):
             data = data.encode()
-        sign_data = crypto.sign(self.pkey, data, "sha256")
-        sign_data = base64.b64encode(sign_data).decode()
+        assert type(data) is bytes
+        assert content_type
         headers = {
-            "sign-data": sign_data,
+            "sign-data": self._sign_data(data),
             "sign-thumbprint": self.sign_thumbprint,
             "sign-system": self.sign_system,
             "Content-Type": content_type,
