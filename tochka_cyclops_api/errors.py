@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Type
 
 import requests
+
+from .utils import AttrDict 
 
 __all__: tuple[str, ...] = ("BaseError", "ConnectionError", "BadResponse", "ApiError")
 
@@ -35,14 +37,22 @@ class BadResponse(BaseError):
 class ApiError(BaseError):
     code: str
     message: str
+    # Может быть словарем и строкой
     meta: Any = None
+    # Иногда возвращается это поле в виде словаря
     data: Any = None
+    # Некоторые методы API возвращают еще и егора, те да там конструкция вида: {"error": {"error": ...}} (масло масляное)
     error: Any = None
+    # На случай если будут добавлены еще какие-то поля
+    kwargs: field(default_factory=dict) = None
 
     @classmethod
-    def raise_if_error(cls: Type[ApiError], response: dict) -> None:
+    def raise_if_error(cls: Type[ApiError], response: AttrDict) -> None:
         if "error" in response:
-            raise cls(**response["error"])
+            raise cls(
+                **{k: kwargs.pop(k) for k in response.error if k in cls.__match_args__},
+                kwargs=response.error,
+            )
 
     # 4418: This operation is impossible with the current status of the deal; meta: 'in_process'
     def __str__(self) -> str:
