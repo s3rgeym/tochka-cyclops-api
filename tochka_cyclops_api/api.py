@@ -62,7 +62,9 @@ class ApiTochka:
 
     def default_session(self) -> requests.Session:
         s = requests.session()
-        s.headers.update({"Accept": "application/json"})
+        s.headers.update({
+            "Accept": "application/json",
+        })
         return s
 
     def __post_init__(self) -> None:
@@ -112,8 +114,8 @@ class ApiTochka:
         return rv
 
     @staticmethod
-    def _generate_id() -> uuid.UUID:
-        return uuid.uuid4()
+    def _generate_id() -> str:
+        return str(uuid.uuid4())
 
     def jsonrpc_call(
         self,
@@ -123,18 +125,15 @@ class ApiTochka:
         **kwargs: Any,
     ) -> Any:
         params = dict(params or {}, **kwargs)
-
         payload = {
             "jsonrpc": "2.0",
             "method": method,
             "params": params,
             "id": self._generate_id(),
         }
-
         data = json.dumps(payload, default=str)
-
         res = self.request(endpoint or "/v2/jsonrpc", data)
-        assert res.id == str(payload["id"])
+        assert res.id == payload["id"]
         return res.result
 
     def __getattr__(self, name: str) -> Any:
@@ -169,10 +168,10 @@ class ApiTochka:
         if isinstance(document_date, (datetime.date, datetime.datetime)):
             document_date = document_date.strftime("%Y-%m-%d")
         params = dict(
-            params or {},
-            document_type=document_type,
-            document_number=str(document_number), 
+            params or {},   
             document_date=document_date,
+            document_number=str(document_number),
+            document_type=document_type,
             **kwargs,
         )
         if not content_type:
