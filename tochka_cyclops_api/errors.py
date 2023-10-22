@@ -56,7 +56,7 @@ class ApiError(BaseError):
     # 4418: This operation is impossible with the current status of the deal; meta: 'in_process'
     def __str__(self) -> str:
         rv = [f"{self.code}: {self.message}"]
-        for k in ['meta', 'data', 'error']:
+        for k in ['meta', 'data', 'error', 'rest']:
             if v := getattr(self, k):
                 rv.append(f"{k}: {v!r}")
         return "; ".join(rv)
