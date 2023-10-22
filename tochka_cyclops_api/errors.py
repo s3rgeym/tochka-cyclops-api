@@ -44,6 +44,7 @@ class ApiError(BaseError):
         if "error" in response:
             raise cls(**response["error"])
 
+    # 4418: This operation is impossible with the current status of the deal; meta: 'in_process'
     def __str__(self) -> str:
         rv = [f"{self.code}: {self.message}"]
         for prop in ["meta", "data", "error"]:
