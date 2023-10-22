@@ -55,8 +55,11 @@ class ApiError(BaseError):
 
     # 4418: This operation is impossible with the current status of the deal; meta: 'in_process'
     def __str__(self) -> str:
-        rv = [f"{self.code}: {self.message}"]
-        for k in ['meta', 'data', 'error', 'rest']:
-            if v := getattr(self, k):
-                rv.append(f"{k}: {v!r}")
-        return "; ".join(rv)
+        return "; ".join([
+            f"{self.code}: {self.message}", 
+            *(
+                f"{k}: {self.__dict__[k]!r}" 
+                for k in (set(self.__dict__) - {'code', 'message'}) 
+                if self.__dict__[k]
+            ),
+        ])
