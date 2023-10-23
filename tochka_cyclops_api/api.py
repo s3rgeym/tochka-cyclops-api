@@ -57,6 +57,7 @@ class ApiTochka:
     )
 
     # @cached_property
+    @property
     def pkey(self) -> crypto.PKey:
         return crypto.load_privatekey(
             crypto.FILETYPE_PEM,
