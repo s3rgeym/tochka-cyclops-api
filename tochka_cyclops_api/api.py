@@ -56,7 +56,7 @@ class ApiTochka:
         f"; Python/{'.'.join(map(str, sys.version_info[:3]))})"
     )
 
-    @cached_property
+    # @cached_property
     def pkey(self) -> crypto.PKey:
         return crypto.load_privatekey(
             crypto.FILETYPE_PEM,
