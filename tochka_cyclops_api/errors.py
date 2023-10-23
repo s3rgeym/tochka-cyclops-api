@@ -8,6 +8,8 @@ import requests
 
 from .utils import AttrDict
 
+ERROR_RESPONSE_KEY = 'error'
+
 __all__: tuple[str, ...] = (
     "BaseError",
     "ConnectionError",
@@ -54,13 +56,13 @@ class ApiError(BaseError):
 
     @classmethod
     def raise_if_error(cls: Type[ApiError], response: AttrDict) -> None:
-        if "error" in response:
-            d = deepcopy(response.error)
+        if ERROR_RESPONSE_KEY in response:
+            d = deepcopy(response[ERROR_RESPONSE_KEY])
             # for i in d приведет к ошибке dictionary changed size during iteration
             raise cls(
                 **{
                     i: d.pop(i)
-                    for i in response.error
+                    for i in response[ERROR_RESPONSE_KEY]
                     if i in cls.__match_args__
                 },
                 rest=d,
