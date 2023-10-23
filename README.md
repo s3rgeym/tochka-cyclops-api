@@ -84,7 +84,7 @@ rv = api.upload_document(
     'beneficiary',
     # можно передать любой объект, имеющий метод read, например, `requests.get('https://target/path/to/file.pdf')`,
     # но тогда придется указать content_type
-    open('/path/to/offer.pdf', 'rb'),  
+    open('/path/to/offer.pdf', 'rb'),
     beneficiary_id='...',
     document_type='contract_offer',
     # Эти параметры можно опустить, они сгенерируются автоматически
@@ -93,6 +93,12 @@ rv = api.upload_document(
 )
 
 print(rv.document_id)  # cyclops-231020230621590-98a669e2-859b-44ac-9831-4a964ac7e49b
+```
+
+Запуск тестов:
+
+```bash
+poetry run python -m unittest
 ```
 
 Все мыслимые права защищены _в натуре_ (с) 2023.
