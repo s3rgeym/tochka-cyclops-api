@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from dataclasses import dataclass, field
 from typing import Any, Type
 
@@ -49,7 +50,7 @@ class ApiError(BaseError):
     @classmethod
     def raise_if_error(cls: Type[ApiError], response: AttrDict) -> None:
         if "error" in response:
-            d = dict(response.error)
+            d = deepcopy(response.error)
             # for i in d приведет к ошибке dictionary changed size during iteration
             raise cls(**{i: d.pop(i) for i in response.error if i in cls.__match_args__}, rest=d)
 
