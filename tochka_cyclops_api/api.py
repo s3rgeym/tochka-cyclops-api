@@ -35,6 +35,7 @@ DocumentMimeTypes = Literal[
 ]
 
 
+# TODO: генерация методов для автодополнения
 @dataclass
 class ApiTochka:
     """See: <https://api.tochka.com/static/v1/tender-docs/cyclops/main/index.html>"""
