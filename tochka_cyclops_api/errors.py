@@ -6,9 +6,14 @@ from typing import Any, Type
 
 import requests
 
-from .utils import AttrDict 
+from .utils import AttrDict
 
-__all__: tuple[str, ...] = ("BaseError", "ConnectionError", "BadResponse", "ApiError")
+__all__: tuple[str, ...] = (
+    "BaseError",
+    "ConnectionError",
+    "BadResponse",
+    "ApiError",
+)
 
 
 class BaseError(Exception):
@@ -52,15 +57,24 @@ class ApiError(BaseError):
         if "error" in response:
             d = deepcopy(response.error)
             # for i in d приведет к ошибке dictionary changed size during iteration
-            raise cls(**{i: d.pop(i) for i in response.error if i in cls.__match_args__}, rest=d)
+            raise cls(
+                **{
+                    i: d.pop(i)
+                    for i in response.error
+                    if i in cls.__match_args__
+                },
+                rest=d,
+            )
 
     # 4418: This operation is impossible with the current status of the deal; meta: 'in_process'
     def __str__(self) -> str:
-        return "; ".join([
-            f"{self.code}: {self.message}", 
-            *(
-                f"{k}: {self.__dict__[k]!r}" 
-                for k in (set(self.__dict__) - {'code', 'message'}) 
-                if self.__dict__[k]
-            ),
-        ])
+        return "; ".join(
+            [
+                f"{self.code}: {self.message}",
+                *(
+                    f"{k}: {self.__dict__[k]!r}"
+                    for k in (set(self.__dict__) - {"code", "message"})
+                    if self.__dict__[k]
+                ),
+            ]
+        )
