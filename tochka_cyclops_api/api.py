@@ -4,6 +4,7 @@ import base64
 import datetime
 import io
 import json
+import logging
 import mimetypes
 import sys
 import time
@@ -18,6 +19,8 @@ from OpenSSL import crypto
 
 from .errors import *
 from .utils import AttrDict, camel_to_snake
+
+logger = logging.getLogger(__package__)
 
 DocumentMimeTypes = Literal[
     "application/pdf",
@@ -63,9 +66,11 @@ class ApiTochka:
 
     def default_session(self) -> requests.Session:
         s = requests.session()
-        s.headers.update({
-            "Accept": "application/json",
-        })
+        s.headers.update(
+            {
+                "Accept": "application/json",
+            }
+        )
         return s
 
     def __post_init__(self) -> None:
@@ -136,6 +141,7 @@ class ApiTochka:
             "id": self._generate_id(),
         }
         data = json.dumps(payload, default=str)
+        logger.debug("JSON Request Body: %r", data)
         res = self.request(endpoint or "/v2/jsonrpc", data)
         assert res.id == payload["id"]
         return res.result
@@ -172,7 +178,7 @@ class ApiTochka:
         if isinstance(document_date, (datetime.date, datetime.datetime)):
             document_date = document_date.strftime("%Y-%m-%d")
         params = dict(
-            params or {},   
+            params or {},
             document_date=document_date,
             document_number=str(document_number),
             document_type=document_type,
