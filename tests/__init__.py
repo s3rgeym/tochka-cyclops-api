@@ -6,17 +6,21 @@ from tochka_cyclops_api.utils import AttrDict
 
 
 class Test(unittest.TestCase):
+    def test_attr_dict(self) -> None:
+        res = AttrDict.from_dict({"users": [{"id": 42, "name": "John Carmak"}]})
+        self.assertEqual(res.users[0].id, 42)
+        self.assertEqual(res.users[0].name, "John Carmak")
+
     def test_error_string(self) -> None:
         with self.assertRaises(ApiError) as ctx:
-            res = json.loads(
-                """{
-                "error": {
-                    "code": "-10001",
-                    "message": "an exception has occurred",
-                    "meta": "bad name"
+            res = AttrDict.from_dict(
+                {
+                    "error": {
+                        "code": "-10001",
+                        "message": "an exception has occurred",
+                        "meta": "bad name",
+                    }
                 }
-            }""",
-                object_hook=AttrDict,
             )
             ApiError.raise_if_error(res)
         self.assertEqual(
