@@ -50,6 +50,8 @@ class ApiTochka:
     pkey_passphrase: bytes | str | None = None
     session: requests.Session | None = None
     base_url: str = "https://api.tochka.com/api/v1/cyclops"
+    jsonrpc_endpoint: str = "/v2/jsonrpc"
+    upload_document_endpoint: str = "/upload_document/{kind}"
     timeout: float = 15.0
     user_agent: str = (
         "Mozilla/5.0 (+https://github.com/s3rgeym/tochka-cyclops-api"
@@ -83,13 +85,41 @@ class ApiTochka:
     def _sign_data(self, data: bytes) -> str:
         return base64.b64encode(crypto.sign(self.pkey, data, "sha256")).decode()
 
-    def request(
+    def _retry_request(
+        self,
+        url: str,
+        endpoint: str,
+        data: str | bytes,
+        headers: dict[str, str],
+        query_params: dict | None,
+        content_type: str,
+        tries: int,
+    ) -> AttrDict:
+        while 1:
+            try:
+                resp = self.session.post(
+                    url,
+                    data=data,
+                    params=query_params,
+                    headers=headers,
+                    timeout=self.timeout,
+                )
+                # Позволяет использовать rv.foo.bar вместо rv['foo']['bar']
+                # rv = resp.json(object_hook=lambda x: SimpleNamespace(**x))
+                return resp.json(object_hook=AttrDict)
+            except requests.Timeout as ex:
+                tries -= 1
+                if not tries:
+                    raise ConnectionError("Maximum connection retries exceeded")
+
+    def _request(
         self,
         endpoint: str,
         data: str | bytes | io.IOBase,
         query_params: dict | None = None,
         content_type: str = "application/json",
-    ) -> Any:
+        tries: int = 1,  # если указать <= 0, то будет выполняться до победного
+    ) -> AttrDict:
         if callable(getattr(data, "read", None)):
             data = data.read()
         if not isinstance(data, bytes):
@@ -104,16 +134,14 @@ class ApiTochka:
             "User-Agent": self.user_agent,
         }
         try:
-            resp = self.session.post(
+            rv = self._retry_request(
                 self._get_full_url(endpoint),
-                data=data,
-                params=query_params,
-                headers=headers,
-                timeout=self.timeout,
+                data,
+                headers,
+                query_params,
+                content_type,
+                tries,
             )
-            # Позволяет использовать rv.foo.bar вместо rv['foo']['bar']
-            # rv = resp.json(object_hook=lambda x: SimpleNamespace(**x))
-            rv = resp.json(object_hook=AttrDict)
         except requests.JSONDecodeError as e:
             raise BadResponse.from_response(response=resp) from e
         except requests.RequestException as e:
@@ -131,7 +159,8 @@ class ApiTochka:
         self,
         method: str,
         params: dict | None = None,
-        endpoint: str | None = None,
+        *,
+        tries: int = 1,
         **kwargs: Any,
     ) -> Any:
         params = dict(params or {}, **kwargs)
@@ -143,7 +172,7 @@ class ApiTochka:
         }
         data = json.dumps(payload, default=str)
         logger.debug("JSON Request Body: %r", data)
-        res = self.request(endpoint or "/v2/jsonrpc", data)
+        res = self._request(self.jsonrpc_endpoint, data, tries=tries)
         assert res.id == payload["id"]
         return res.result
 
@@ -170,6 +199,7 @@ class ApiTochka:
         document_number: str | int | None = None,
         document_date: datetime.datetime | datetime.date | str | None = None,
         content_type: DocumentMimeTypes | None = None,
+        tries: int = 1,
         **kwargs: Any,
     ) -> dict:
         if document_number is None:
@@ -190,6 +220,10 @@ class ApiTochka:
             if not hasattr(data, "name"):
                 raise ValueError("you must specify content_type for raw data")
             content_type, _ = mimetypes.guess_type(data.name)
-        return self.request(
-            f"/upload_document/{kind}", data, params, content_type
+        return self._request(
+            self.upload_document_endpoint.format(kind=kind), 
+            data, 
+            params, 
+            content_type, 
+            tries=tries,
         )
