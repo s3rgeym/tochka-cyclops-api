@@ -88,11 +88,9 @@ class ApiTochka:
     def _retry_request(
         self,
         url: str,
-        endpoint: str,
         data: str | bytes,
         headers: dict[str, str],
         query_params: dict | None,
-        content_type: str,
         tries: int,
     ) -> AttrDict:
         while 1:
@@ -111,9 +109,15 @@ class ApiTochka:
                 tries -= 1
                 if not tries:
                     raise MaximumRetriesExceeded() from ex
+            except requests.JSONDecodeError as e:
+                raise BadResponse.from_response(response=resp) from e
+            except requests.RequestException as e:
+                raise ConnectionError(
+                    f"Request failed due connection error: {e}"
+                ) from e
 
     def _request(
-        self,++
+        self,
         endpoint: str,
         data: str | bytes | io.IOBase,
         query_params: dict | None = None,
@@ -133,21 +137,13 @@ class ApiTochka:
             "Content-Type": content_type,
             "User-Agent": self.user_agent,
         }
-        try:
-            rv = self._retry_request(
-                self._get_full_url(endpoint),
-                data,
-                headers,
-                query_params,
-                content_type,
-                tries,
-            )
-        except requests.JSONDecodeError as e:
-            raise BadResponse.from_response(response=resp) from e
-        except requests.RequestException as e:
-            raise ConnectionError(
-                f"Request failed due connection error: {e}"
-            ) from e
+        rv = self._retry_request(
+            url=self._get_full_url(endpoint),
+            data=data,
+            headers=headers,
+            query_params=query_params,
+            tries=tries,
+        )
         ApiError.raise_if_error(rv)
         return rv
 
@@ -221,9 +217,9 @@ class ApiTochka:
                 raise ValueError("you must specify content_type for raw data")
             content_type, _ = mimetypes.guess_type(data.name)
         return self._request(
-            self.upload_document_endpoint.format(kind=kind), 
-            data, 
-            params, 
-            content_type, 
+            self.upload_document_endpoint.format(kind=kind),
+            data,
+            params,
+            content_type,
             tries=tries,
         )
