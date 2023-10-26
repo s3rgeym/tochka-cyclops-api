@@ -35,7 +35,7 @@ class ConnectionError(Error):
 
 
 class MaximumRetriesExceeded(ConnectionError):
-   error_message = "Maximum retries exceeded"
+   error_message = "Maximum connection retries exceeded"
 
 
 @dataclass(frozen=True)
