@@ -8,7 +8,7 @@ import requests
 
 from .utils import AttrDict
 
-ERROR_RESPONSE_KEY = 'error'
+ERROR_RESPONSE_KEY = "error"
 
 __all__: tuple[str, ...] = (
     "Error",
@@ -24,7 +24,11 @@ class Error(Exception):
     error_message: str = "An unexcpected error has occurred"
 
     def __init__(self, error_message: str | None = None):
-        super().__init__(error_message or self.error_message)
+        self.error_message = error_message or self.error_message
+        super().__init__(self.error_message)
+
+    def __str__(self) -> str:
+        return self.error_message
 
 
 BaseError = Error
@@ -35,7 +39,7 @@ class ConnectionError(Error):
 
 
 class MaximumRetriesExceeded(ConnectionError):
-   error_message = "Maximum connection retries exceeded"
+    error_message = "Maximum connection retries exceeded"
 
 
 @dataclass(frozen=True)
