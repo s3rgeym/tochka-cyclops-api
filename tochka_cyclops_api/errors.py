@@ -11,23 +11,35 @@ from .utils import AttrDict
 ERROR_RESPONSE_KEY = 'error'
 
 __all__: tuple[str, ...] = (
+    "Error",
     "BaseError",
     "ConnectionError",
+    "MaximumRetriesExceeded",
     "BadResponse",
     "ApiError",
 )
 
 
-class BaseError(Exception):
+class Error(Exception):
+    error_message: str | None = None
+
+    def __init__(self, error_message: str | None = None):
+        super().__init__(error_message or self.error_message)
+
+
+BaseError = Error
+
+
+class ConnectionError(Error):
     pass
 
 
-class ConnectionError(BaseError):
-    pass
+class MaximumRetriesExceeded(ConnectionError):
+   error_message = "Maximum retries exceeded"
 
 
 @dataclass(frozen=True)
-class BadResponse(BaseError):
+class BadResponse(Error):
     status: int
     reason: str
 
@@ -37,12 +49,13 @@ class BadResponse(BaseError):
     ) -> BadResponse:
         return cls(status=response.status_code, reason=response.reason)
 
-    def __str__(self) -> str:
+    @property
+    def error_message(self) -> str:
         return f"{self.status}: {self.reason}"
 
 
 @dataclass(frozen=True)
-class ApiError(BaseError):
+class ApiError(Error):
     code: str
     message: str
     # Может быть словарем и строкой
@@ -69,7 +82,8 @@ class ApiError(BaseError):
             )
 
     # 4418: This operation is impossible with the current status of the deal; meta: 'in_process'
-    def __str__(self) -> str:
+    @property
+    def error_message(self) -> str:
         return "; ".join(
             [
                 f"{self.code}: {self.message}",
