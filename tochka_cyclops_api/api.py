@@ -17,6 +17,11 @@ from urllib.parse import urljoin
 import requests
 from OpenSSL import crypto
 
+from .constants import (
+    ERROR_RESPONSE_KEY,
+    KEBAB_PACKAGE_NAME,
+    RESULT_RESPONSE_KEY,
+)
 from .errors import *
 from .utils import AttrDict, camel_to_snake
 
@@ -54,7 +59,7 @@ class ApiTochka:
     upload_document_endpoint: str = "/upload_document/{kind}"
     timeout: float = 15.0
     user_agent: str = (
-        "Mozilla/5.0 (+https://github.com/s3rgeym/tochka-cyclops-api"
+        f"Mozilla/5.0 ({KEBAB_PACKAGE_NAME} +https://github.com/s3rgeym/{KEBAB_PACKAGE_NAME}"
         f"; Python/{'.'.join(map(str, sys.version_info[:3]))})"
     )
 
@@ -71,7 +76,7 @@ class ApiTochka:
         s = requests.session()
         s.headers.update(
             {
-                "Accept": "application/json",
+                "Accept": "application/json;charset=UTF-8",
             }
         )
         return s
@@ -170,7 +175,7 @@ class ApiTochka:
         logger.debug("JSON Request Body: %r", data)
         res = self._request(self.jsonrpc_endpoint, data, tries=tries)
         assert res.id == payload["id"]
-        return res.result
+        return res[RESULT_RESPONSE_KEY]
 
     def __getattr__(self, name: str) -> Any:
         if not name.startswith("_"):

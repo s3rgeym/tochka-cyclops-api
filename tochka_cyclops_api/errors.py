@@ -6,9 +6,8 @@ from typing import Any, Type
 
 import requests
 
+from .constants import ERROR_RESPONSE_KEY
 from .utils import AttrDict
-
-ERROR_RESPONSE_KEY = "error"
 
 __all__: tuple[str, ...] = (
     "Error",
