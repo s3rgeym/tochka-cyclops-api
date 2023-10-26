@@ -21,7 +21,7 @@ __all__: tuple[str, ...] = (
 
 
 class Error(Exception):
-    error_message: str | None = None
+    error_message: str = "An unexcpected error has occurred"
 
     def __init__(self, error_message: str | None = None):
         super().__init__(error_message or self.error_message)
