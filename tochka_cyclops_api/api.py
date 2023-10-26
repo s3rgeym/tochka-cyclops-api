@@ -110,10 +110,10 @@ class ApiTochka:
             except requests.Timeout as ex:
                 tries -= 1
                 if not tries:
-                    raise ConnectionError("Maximum connection retries exceeded")
+                    raise MaximumRetriesExceeded() from ex
 
     def _request(
-        self,
+        self,++
         endpoint: str,
         data: str | bytes | io.IOBase,
         query_params: dict | None = None,
