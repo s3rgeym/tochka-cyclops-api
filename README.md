@@ -15,8 +15,19 @@
 
 ```bash
 pip install tochka-cyclops-api
+
 # Если текущая версия падает с ошибкой, установите предыдущую
-pip install tochka-cyclops-api==X.X.X
+pip install tochka-cyclops-api==0.3.0
+
+# или так
+poetry add tochka-cyclops-api
+
+poetry add git+https://github.com/s3rgeym/tochka-cyclops-api.git
+
+git clone https://github.com/s3rgeym/tochka-cyclops-api.git
+cd tochka-cyclops-api
+# что-то правим
+poetry install --no-dev
 ```
 
 Поддержка asyncio пока не планируется, но за звезду и донат в пару тысяч оперативно добавлю.
