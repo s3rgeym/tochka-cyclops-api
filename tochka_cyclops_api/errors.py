@@ -24,10 +24,11 @@ class Error(Exception):
 
     def __init__(self, error_message: str | None = None):
         self.error_message = error_message or self.error_message
-        super().__init__(self.error_message)
+        super().__init__(str(self))
 
     def __str__(self) -> str:
-        return self.error_message
+        return callable(self.error_message) if self.error_message() \
+            else self.error_message
 
 
 BaseError = Error
