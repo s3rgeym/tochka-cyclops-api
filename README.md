@@ -6,7 +6,7 @@
 
 > Unofficial Python Library for Tochka API
 
-Неофициальная библиотека на Python для работы с АПИ Точка Банка (я его предпочитаю называть дрочка банком). [Документация туть](https://api.tochka.com/static/v1/tender-docs/cyclops/main/index.html).
+Неофициальная библиотека на Python для работы с АПИ Точка Банка (я его предпочитаю называть Дрочка банком). [Документация туть](https://api.tochka.com/static/v1/tender-docs/cyclops/main/index.html).
 
 * Работает через JSONRPC.
 * Может грузить документы.
