@@ -98,7 +98,7 @@ class ApiTochka:
         query_params: dict | None,
         tries: int,
     ) -> AttrDict:
-        while 1:
+        while tries:
             try:
                 resp = self.session.post(
                     url,
@@ -110,16 +110,15 @@ class ApiTochka:
                 # Позволяет использовать rv.foo.bar вместо rv['foo']['bar']
                 # rv = resp.json(object_hook=lambda x: SimpleNamespace(**x))
                 return resp.json(object_hook=AttrDict)
-            except requests.Timeout as ex:
+            except requests.Timeout:
                 tries -= 1
-                if not tries:
-                    raise MaximumRetriesExceeded() from ex
             except requests.JSONDecodeError as e:
                 raise BadResponse.from_response(response=resp) from e
             except requests.RequestException as e:
                 raise ConnectionError(
                     f"Request failed due connection error: {e}"
                 ) from e
+        raise MaximumRetriesExceeded()
 
     def _request(
         self,
@@ -127,7 +126,7 @@ class ApiTochka:
         data: str | bytes | io.IOBase,
         query_params: dict | None = None,
         content_type: str = "application/json",
-        tries: int = 1,  # если указать <= 0, то будет выполняться до победного
+        tries: int = 1,  # если указать -1, то будет выполняться до победного
     ) -> AttrDict:
         if callable(getattr(data, "read", None)):
             data = data.read()
