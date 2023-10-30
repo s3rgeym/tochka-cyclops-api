@@ -1,6 +1,6 @@
 # Tochka API v2 aka Cyclops API Library for Python
 
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/tochka-cyclops-api)]() [![PyPI - Version](https://img.shields.io/pypi/v/tochka-cyclops-api)]() [![PyPI - Downloads](https://img.shields.io/pypi/dm/tochka-cyclops-api)]()
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/tochka-cyclops-api)]() [![PyPI - Version](https://img.shields.io/pypi/v/tochka-cyclops-api)]() [![PyPI - Downloads](https://img.shields.io/pypi/dm/tochka-cyclops-api)]() [![Total Downloads](https://static.pepy.tech/badge/tochka-cyclops-api)]()
 
 Ставьте звезды, суки бесполезные! Мне от ваших 100 установок в первый день НИКАКОЙ ПОЛЬЗЫ
 
