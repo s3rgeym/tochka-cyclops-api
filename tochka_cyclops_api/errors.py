@@ -27,8 +27,11 @@ class Error(Exception):
         super().__init__(str(self))
 
     def __str__(self) -> str:
-        return callable(self.error_message) if self.error_message() \
+        return (
+            self.error_message()
+            if callable(self.error_message)
             else self.error_message
+        )
 
 
 BaseError = Error
