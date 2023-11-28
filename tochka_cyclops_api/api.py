@@ -11,8 +11,10 @@ import time
 import uuid
 from dataclasses import KW_ONLY, dataclass
 from functools import cached_property
+from os import getenv
 from typing import Any, BinaryIO, Literal
 from urllib.parse import urljoin
+from urllib.request import getproxies
 
 import requests
 from OpenSSL import crypto
@@ -43,6 +45,9 @@ DocumentMimeTypes = Literal[
 ]
 
 
+ProxiesDict = dict[str, str]
+SYSTEM_PROXIES: ProxiesDict = getproxies()
+
 # TODO: генерация методов для автодополнения
 @dataclass
 class ApiTochka:
@@ -63,14 +68,22 @@ class ApiTochka:
         f"; Python/{'.'.join(map(str, sys.version_info[:3]))})"
     )
 
-    # @cached_property
-    @property
+    @cached_property
     def pkey(self) -> crypto.PKey:
         return crypto.load_privatekey(
             crypto.FILETYPE_PEM,
             self.pkey_data,
             self.pkey_passphrase,
         )
+
+    # @cached_property
+    # def get_proxies(self) -> ProxiesDict:
+    #     rv = {}
+    #     for end in ['', 's']:
+    #         key = 'http' + end
+    #         if val := getenv(key.upper() + '_PROXY'):
+    #             rv[key] = val
+    #     return rv
 
     def default_session(self) -> requests.Session:
         s = requests.session()
@@ -106,6 +119,7 @@ class ApiTochka:
                     params=query_params,
                     headers=headers,
                     timeout=self.timeout,
+                    proxies=SYSTEM_PROXIES,
                 )
                 # Позволяет использовать rv.foo.bar вместо rv['foo']['bar']
                 # rv = resp.json(object_hook=lambda x: SimpleNamespace(**x))
