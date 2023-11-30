@@ -93,7 +93,7 @@ class ApiError(Error):
     def error_message(self) -> str:
         return "; ".join(
             [
-                f"{self.code}: {self.message}",
+                f"{self.code}: {self.message.rstrip('.')}",
                 *(
                     f"{k}: {self.__dict__[k]!r}"
                     for k in (set(self.__dict__) - {"code", "message"})
