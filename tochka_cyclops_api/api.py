@@ -142,7 +142,7 @@ class ApiTochka:
         content_type: str = "application/json",
         tries: int = 1,  # если указать -1, то будет выполняться до победного
     ) -> AttrDict:
-        if callable(getattr(data, "read", None)):
+        if getattr(data, "read", 0):
             data = data.read()
         if not isinstance(data, bytes):
             data = data.encode()
